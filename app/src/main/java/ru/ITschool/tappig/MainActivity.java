@@ -1,5 +1,7 @@
 package ru.ITschool.tappig;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +18,8 @@ int nTaps;
 TextView TextTop;
 TextView TextBottom;
 ImageView ImgPig;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,10 +33,21 @@ ImageView ImgPig;
         TextTop = findViewById(R.id.TextTop);
         TextBottom = findViewById(R.id.TextBottom);
         ImgPig = findViewById(R.id.ImagePig);
+        loadPig();
+        updateTaxtBottom();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        savePig();
     }
 
     public void tap(View view) {
         nTaps++;
+        updateTaxtBottom();
+    }
+    void updateTaxtBottom(){
         TextBottom.setText("Вы потапали "+nTaps+end());
     }
 
@@ -41,6 +56,15 @@ ImageView ImgPig;
             return " раза";
         }
         return " раз";
+    }
 
+    public  void  savePig(){
+        SharedPreferences prefs = getSharedPreferences("PigsPrefs", Context.MODE_PRIVATE);
+        prefs.edit().putInt("num taps", nTaps).apply();
+    }
+
+    public void loadPig(){
+        SharedPreferences prefs = getSharedPreferences("PigsPrefs", Context.MODE_PRIVATE);
+        nTaps = prefs.getInt("num taps", 0);
     }
 }
