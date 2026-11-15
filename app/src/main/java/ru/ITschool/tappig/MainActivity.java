@@ -2,6 +2,8 @@ package ru.ITschool.tappig;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -46,6 +48,9 @@ ImageView ImgPig;
     public void tap(View view) {
         nTaps++;
         updateTaxtBottom();
+        MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.pig_sound);
+        mediaPlayer.start();
+        mediaPlayer.setVolume(1f, 1f);
     }
     void updateTaxtBottom(){
         TextBottom.setText("Вы потапали "+nTaps+end());
