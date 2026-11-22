@@ -2,6 +2,7 @@ package ru.ITschool.tappig;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -20,7 +21,8 @@ int nTaps;
 TextView TextTop;
 TextView TextBottom;
 ImageView ImgPig;
-
+SoundPool soundPool;
+int pigSoundId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +37,18 @@ ImageView ImgPig;
         TextTop = findViewById(R.id.TextTop);
         TextBottom = findViewById(R.id.TextBottom);
         ImgPig = findViewById(R.id.ImagePig);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .build();
+        soundPool = new SoundPool.Builder()
+                .setMaxStreams(5)
+                        .setAudioAttributes(audioAttributes)
+                            .build();
+        pigSoundId = soundPool.load(this, R.raw.pig_sound, 1);
         loadPig();
         updateTaxtBottom();
+
     }
 
     @Override
@@ -48,9 +60,14 @@ ImageView ImgPig;
     public void tap(View view) {
         nTaps++;
         updateTaxtBottom();
-        MediaPlayer mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.pig_sound);
-        mediaPlayer.start();
-        mediaPlayer.setVolume(1f, 1f);
+        soundPool.play(pigSoundId, 1f, 1f, 1, 0, 1f);
+    }
+    protected  void  onDestroy(){
+        super.onDestroy();
+        if(soundPool != null){
+            soundPool.release();
+            soundPool = null;
+        }
     }
     void updateTaxtBottom(){
         TextBottom.setText("Вы потапали "+nTaps+end());
